@@ -22,7 +22,7 @@
 void do_file_io(int fd, char *buf, 
       u_int64_t *offset_array, size_t n, int opt_read);
 void shuffle(u_int64_t *array, size_t n);
-
+void read_into_cache(int fd);
 
 int main(int argc, char *argv[]) {
 
@@ -87,6 +87,8 @@ int main(int argc, char *argv[]) {
 
 	
 	int fd = open(filename, write_operation ? O_WRONLY : O_RDONLY, __O_DIRECT);
+	if(read_into_cache_true)
+		read_into_cache(fd);
 	struct stat file_stats;
 	fstat(fd, &file_stats);
 	size_t file_size = file_stats.st_size;
@@ -159,4 +161,23 @@ void shuffle(u_int64_t *array, size_t n)
 		array[i] = t;
 		}
 	}
+}
+
+void read_into_cache(int fd) {
+
+	FILE *fptr = fdopen(fd, "r");
+
+	if((fptr == NULL)) {
+		handle_error("Failed to open data file\n");
+	}
+	
+
+	for(int i = 0; i < 10; ++i) {
+		int c = fgetc(fptr);
+		while(c != EOF) c = fgetc(fptr);
+		fseek(fptr, 0, SEEK_SET);
+		printf("%d\n", i);
+	}
+	
+	return;
 }
