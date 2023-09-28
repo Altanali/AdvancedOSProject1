@@ -4,7 +4,7 @@ export TIMEFORMAT=%R
 num_runs=10
 program="time ./mmap_exec"
 program_data='../data.txt'
-output_file="results-fake.txt"
+output_file="results.txt"
 
 
 > "$output_file"
